@@ -1,0 +1,3 @@
+rootProject.name = 'reacktive'
+
+enableFeaturePreview('GRADLE_METADATA')
