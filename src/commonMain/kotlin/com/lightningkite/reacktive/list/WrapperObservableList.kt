@@ -2,7 +2,7 @@ package com.lightningkite.reacktive.list
 
 
 import com.lightningkite.reacktive.invokeAll
-import com.lightningkite.reacktive.property.ObservablePropertyReference
+import com.lightningkite.reacktive.property.ReferenceObservableProperty
 import com.lightningkite.reacktive.property.update
 
 /**
@@ -16,7 +16,7 @@ class WrapperObservableList<E>(
     override val onListAdd = HashSet<(E, Int) -> Unit>()
     override val onListChange = HashSet<(E, E, Int) -> Unit>()
     override val onListMove = HashSet<(E, Int, Int) -> Unit>()
-    override val onListUpdate = ObservablePropertyReference<ObservableList<E>>({ this@WrapperObservableList }, { replace(it) })
+    override val onListUpdate = ReferenceObservableProperty<ObservableList<E>>({ this@WrapperObservableList }, { replace(it) })
     override val onListReplace = HashSet<(ObservableList<E>) -> Unit>()
     override val onListRemove = HashSet<(E, Int) -> Unit>()
 

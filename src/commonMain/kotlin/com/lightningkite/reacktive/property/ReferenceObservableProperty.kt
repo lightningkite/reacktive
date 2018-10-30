@@ -10,7 +10,7 @@ import kotlin.reflect.KMutableProperty1
  * Note that for the observable to update, you *must* modify the reference through this observable.
  * Created by jivie on 2/22/16.
  */
-class ObservablePropertyReference<T>(
+class ReferenceObservableProperty<T>(
     val getterFun: () -> T,
     val setterFun: (T) -> Unit
 ) : MutableObservableProperty<T>, Event<T> by ArrayList() {

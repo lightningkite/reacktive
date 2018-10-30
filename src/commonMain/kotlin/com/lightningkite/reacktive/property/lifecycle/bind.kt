@@ -1,9 +1,18 @@
 package com.lightningkite.reacktive.property.lifecycle
 
 import com.lightningkite.reacktive.Event
+import com.lightningkite.reacktive.Event0
 import com.lightningkite.reacktive.Lifecycle
 import com.lightningkite.reacktive.property.ObservableProperty
 
+
+fun Lifecycle.bind(
+        event: Event0,
+        listener:()->Unit
+) = openCloseBinding(
+        onOpen = { event.add(listener); listener.invoke() },
+        onClose = { event.remove(listener) }
+)
 
 fun <T> Lifecycle.bind(
         event: Event<T>,

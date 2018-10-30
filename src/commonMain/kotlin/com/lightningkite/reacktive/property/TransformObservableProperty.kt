@@ -10,7 +10,7 @@ import com.lightningkite.reacktive.EnablingMutableCollection
  * Transforms an observable property from one type to another.
  * Created by jivie on 2/22/16.
  */
-class ObservablePropertyMapped<S, T>(
+class TransformObservableProperty<S, T>(
         val observable: ObservableProperty<S>,
         val transformer: (S) -> T
 ) : EnablingMutableCollection<(T) -> Unit>(), ObservableProperty<T> {
@@ -31,9 +31,9 @@ class ObservablePropertyMapped<S, T>(
     }
 }
 
-fun <S, T> ObservableProperty<S>.transform(mapper: (S) -> T): ObservablePropertyMapped<S, T> {
-    return ObservablePropertyMapped(this, mapper)
+fun <S, T> ObservableProperty<S>.transform(mapper: (S) -> T): TransformObservableProperty<S, T> {
+    return TransformObservableProperty(this, mapper)
 }
 
 @Deprecated("This is the same as using 'mapUnfailing'.", ReplaceWith("this.mapUnfailing(getterFun)", "com.lightningkite.kotlin.observable.property.mapUnfailing"))
-fun <A, B> ObservableProperty<A>.sub(getterFun: (A) -> B) = ObservablePropertyMapped(this, getterFun)
+fun <A, B> ObservableProperty<A>.sub(getterFun: (A) -> B) = TransformObservableProperty(this, getterFun)

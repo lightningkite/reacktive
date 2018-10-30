@@ -39,3 +39,5 @@ class CombineObservablePropertyBlind<T>(
         callbacks.clear()
     }
 }
+
+fun <T> List<ObservableProperty<*>>.combine(combine: () -> T) = CombineObservablePropertyBlind(this, combine)

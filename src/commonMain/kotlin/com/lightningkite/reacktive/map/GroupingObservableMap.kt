@@ -4,11 +4,9 @@ import com.lightningkite.reacktive.invokeAll
 import com.lightningkite.reacktive.EnablingObject
 import com.lightningkite.reacktive.collection.MutableObservableCollection
 import com.lightningkite.reacktive.collection.ObservableCollection
-import com.lightningkite.reacktive.collection.WrapperObservableCollection
 import com.lightningkite.reacktive.property.ObservableProperty
-import com.lightningkite.reacktive.property.ObservablePropertyReference
+import com.lightningkite.reacktive.property.ReferenceObservableProperty
 import com.lightningkite.reacktive.property.update
-import com.lightningkite.reacktive.set.MutableObservableSet
 
 class GroupingObservableMap<K, E>(
         val source: ObservableCollection<E>,
@@ -242,6 +240,6 @@ class InnerCollection<E>(val enablingObject: EnablingObject, val wraps: MutableC
     override val onCollectionAdd: MutableCollection<(value: E) -> Unit> = enablingObject.SubEnablingCollection()
     override val onCollectionChange: MutableCollection<(old: E, new: E) -> Unit> = enablingObject.SubEnablingCollection()
     override val onCollectionRemove: MutableCollection<(value: E) -> Unit> = enablingObject.SubEnablingCollection()
-    override val onCollectionUpdate = ObservablePropertyReference<ObservableCollection<E>>({ this@InnerCollection }, { replace(it) })
+    override val onCollectionUpdate = ReferenceObservableProperty<ObservableCollection<E>>({ this@InnerCollection }, { replace(it) })
     override val onCollectionReplace: MutableCollection<(ObservableCollection<E>) -> Unit> = enablingObject.SubEnablingCollection()
 }

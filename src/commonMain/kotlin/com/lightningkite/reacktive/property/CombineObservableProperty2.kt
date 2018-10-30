@@ -40,4 +40,4 @@ class CombineObservableProperty2<A, B, T>(
 }
 
 infix fun <A, B> ObservableProperty<A>.pair(other:ObservableProperty<B>)
-        = CombineObservableProperty2(this, other, { a, b -> a to b})
+        = CombineObservableProperty2(this, other) { a, b -> a to b}

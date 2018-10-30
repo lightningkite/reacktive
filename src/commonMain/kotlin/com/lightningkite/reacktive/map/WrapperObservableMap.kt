@@ -2,7 +2,7 @@ package com.lightningkite.reacktive.map
 
 import com.lightningkite.reacktive.invokeAll
 import com.lightningkite.reacktive.collection.MutableObservableCollection
-import com.lightningkite.reacktive.property.ObservablePropertyReference
+import com.lightningkite.reacktive.property.ReferenceObservableProperty
 import com.lightningkite.reacktive.property.update
 import com.lightningkite.reacktive.set.MutableObservableSet
 
@@ -10,7 +10,7 @@ class WrapperObservableMap<K, V>(val wraps: MutableMap<K, V> = HashMap<K, V>()) 
 
     override val onMapPut: MutableCollection<(key: K, hadPrevious: Boolean, previous: V?, new: V) -> Unit> = ArrayList()
     override val onMapRemove: MutableCollection<(key: K, value: V) -> Unit> = ArrayList()
-    override val onMapUpdate = ObservablePropertyReference<ObservableMap<K, V>>({ this }, { replace(it) })
+    override val onMapUpdate = ReferenceObservableProperty<ObservableMap<K, V>>({ this }, { replace(it) })
     override val onMapReplace: MutableCollection<(ObservableMap<K, V>) -> Unit> = ArrayList()
 
     override val entries: MutableObservableSet<MutableMap.MutableEntry<K, V>> = MutableEntryObservableSet(

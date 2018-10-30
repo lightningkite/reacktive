@@ -5,19 +5,9 @@ import com.lightningkite.reacktive.EnablingMutableCollection
 
 class VirtualObservableProperty<T>(
         val getterFun: () -> T,
-        val event: MutableCollection<(T) -> Unit>
-) : EnablingMutableCollection<(T) -> Unit>(), ObservableProperty<T> {
+        val event: MutableCollection<(T) -> Unit> = ArrayList()
+) : ObservableProperty<T>, MutableCollection<(T)->Unit> by event {
 
     override val value: T
         get() = getterFun()
-
-    val listener = { t: T -> forEach { it.invoke(t) } }
-
-    override fun enable() {
-        event.add(listener)
-    }
-
-    override fun disable() {
-        event.remove(listener)
-    }
 }

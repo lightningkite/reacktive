@@ -10,7 +10,7 @@ import com.lightningkite.reacktive.EnablingMutableCollection
  * Transforms an observable property from one type to another.
  * Created by jivie on 2/22/16.
  */
-class MutableObservablePropertyMapped<S, T>(
+class TransformMutableObservableProperty<S, T>(
         val observable: MutableObservableProperty<S>,
         val transformer: (S) -> T,
         val reverseTransformer: (T) -> S
@@ -35,6 +35,6 @@ class MutableObservablePropertyMapped<S, T>(
     }
 }
 
-fun <S, T> MutableObservableProperty<S>.transform(mapper: (S) -> T, reverseMapper: (T) -> S): MutableObservablePropertyMapped<S, T> {
-    return MutableObservablePropertyMapped(this, mapper, reverseMapper)
+fun <S, T> MutableObservableProperty<S>.transform(mapper: (S) -> T, reverseMapper: (T) -> S): TransformMutableObservableProperty<S, T> {
+    return TransformMutableObservableProperty(this, mapper, reverseMapper)
 }

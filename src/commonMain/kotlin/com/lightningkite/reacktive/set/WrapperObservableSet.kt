@@ -2,7 +2,7 @@ package com.lightningkite.reacktive.set
 
 import com.lightningkite.reacktive.invokeAll
 import com.lightningkite.reacktive.collection.ObservableCollection
-import com.lightningkite.reacktive.property.ObservablePropertyReference
+import com.lightningkite.reacktive.property.ReferenceObservableProperty
 import com.lightningkite.reacktive.property.update
 
 class WrapperObservableSet<V>(val wraps: MutableSet<V> = HashSet()): MutableObservableSet<V> {
@@ -99,6 +99,6 @@ class WrapperObservableSet<V>(val wraps: MutableSet<V> = HashSet()): MutableObse
     override val onCollectionAdd: MutableCollection<(value: V) -> Unit> = ArrayList()
     override val onCollectionChange: MutableCollection<(old: V, new: V) -> Unit> = ArrayList()
     override val onCollectionRemove: MutableCollection<(value: V) -> Unit> = ArrayList()
-    override val onCollectionUpdate = ObservablePropertyReference<ObservableCollection<V>>({ this@WrapperObservableSet }, { replace(it) })
+    override val onCollectionUpdate = ReferenceObservableProperty<ObservableCollection<V>>({ this@WrapperObservableSet }, { replace(it) })
     override val onCollectionReplace: MutableCollection<(ObservableCollection<V>) -> Unit> = ArrayList()
 }

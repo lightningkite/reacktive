@@ -5,7 +5,7 @@ import com.lightningkite.reacktive.property.lifecycle.bind
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class StandardObservablePropertyTest {
+class ExampleTest {
 
     @Test
     fun propertyExample() {

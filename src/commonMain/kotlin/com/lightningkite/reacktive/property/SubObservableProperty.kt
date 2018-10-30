@@ -10,7 +10,7 @@ import com.lightningkite.reacktive.EnablingMutableCollection
  * Transforms an observable to observe another observable.
  * Created by jivie on 2/22/16.
  */
-class ObservablePropertySubObservable<A, B>(
+class SubObservableProperty<A, B>(
         val owningObservable: ObservableProperty<A>,
         val getter: (A) -> ObservableProperty<B>
 ) : EnablingMutableCollection<(B) -> Unit>(), MutableObservableProperty<B> {
@@ -63,4 +63,4 @@ class ObservablePropertySubObservable<A, B>(
  * Transforms an observable to observe an observable within the observable.
  * Trippy, right?
  */
-fun <A, B> ObservableProperty<A>.subObs(getterFun: (A) -> ObservableProperty<B>) = ObservablePropertySubObservable(this, getterFun)
+fun <A, B> ObservableProperty<A>.sub(getterFun: (A) -> ObservableProperty<B>) = SubObservableProperty(this, getterFun)

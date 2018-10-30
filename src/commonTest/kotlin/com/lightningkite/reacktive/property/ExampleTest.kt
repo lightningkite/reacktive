@@ -3,7 +3,7 @@ package com.lightningkite.reacktive.property
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class StandardObservablePropertyTest {
+class ExampleTest {
 
     @Test
     fun propertyExample() {
