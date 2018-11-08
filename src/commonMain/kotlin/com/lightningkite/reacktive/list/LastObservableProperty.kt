@@ -4,7 +4,7 @@ import com.lightningkite.reacktive.EnablingMutableCollection
 import com.lightningkite.reacktive.property.ObservableProperty
 import com.lightningkite.reacktive.property.update
 
-fun <E> ObservableList<E>.lastOrNullObservable() = IndexObservableProperty(this)
+fun <E> ObservableList<E>.lastOrNullObservable() = LastObservableProperty(this)
 
 class LastObservableProperty<T>(
     val list: ObservableList<T>
@@ -17,7 +17,7 @@ class LastObservableProperty<T>(
         }
     }
     val onListRemove = { element: T, index: Int ->
-        if (index == list.lastIndex) {
+        if (index >= list.lastIndex) {
             update()
         }
     }
