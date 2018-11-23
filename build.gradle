@@ -7,9 +7,33 @@ buildscript {
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}"
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.+'
     }
 }
+
+apply plugin: 'maven-publish'
 apply plugin: 'kotlin-multiplatform'
+apply plugin: 'com.jfrog.bintray'
+
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_KEY')
+    publish = true
+    pkg {
+        repo = project.group.toString()
+        name = project.name
+        userOrg = "lightningkite"
+        licenses = ["MIT"]
+        def github = "https://github.com/lightningkite/${project.name}"
+        vcsUrl = github
+        websiteUrl = github
+        issueTrackerUrl = github + "/issues"
+        version {
+            name = project.version
+            released = new Date()
+        }
+    }
+}
 
 
 repositories {
@@ -19,9 +43,6 @@ repositories {
 }
 group 'com.lightningkite'
 version '0.0.2'
-
-apply plugin: 'maven-publish'
-apply plugin: 'kotlin-multiplatform'
 
 kotlin {
     targets {
