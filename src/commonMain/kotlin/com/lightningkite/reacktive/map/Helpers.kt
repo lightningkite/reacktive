@@ -113,9 +113,11 @@ class ValueObservableSet<K, V>(val parent: ObservableMap<K, V>, val nonObservabl
     override val onCollectionAdd: MutableCollection<(value: V) -> Unit> = parent.onMapPut.mappingWriteOnly { callback ->
         { key, hadPrevious, previous, new -> if (!hadPrevious) callback.invoke(new) }
     }
+    @Suppress("UNCHECKED_CAST")
     override val onCollectionChange: MutableCollection<(old: V, new: V) -> Unit> = parent.onMapPut.mappingWriteOnly { callback ->
         { key, hadPrevious, previous, new -> if (hadPrevious) callback.invoke(previous as V, new) }
     }
+    @Suppress("UNCHECKED_CAST")
     override val onCollectionRemove: MutableCollection<(value: V) -> Unit> = object : MutableCollection<(V) -> Unit> {
         override val size: Int get() = parent.onMapPut.size + parent.onMapRemove.size
 

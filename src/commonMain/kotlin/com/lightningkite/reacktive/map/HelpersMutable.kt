@@ -1,12 +1,11 @@
 package com.lightningkite.reacktive.map
 
 import com.lightningkite.kommon.collection.mappingWriteOnly
-import com.lightningkite.reacktive.invokeAll
 import com.lightningkite.reacktive.collection.ObservableCollection
+import com.lightningkite.reacktive.invokeAll
 import com.lightningkite.reacktive.property.ObservableProperty
 import com.lightningkite.reacktive.property.transform
 import com.lightningkite.reacktive.set.MutableObservableSet
-import com.lightningkite.reacktive.set.ObservableSet
 
 
 private data class MutableDummyEntry<K, V>(val parent: MutableMap<K, V>, override val key: K, override val value: V) : MutableMap.MutableEntry<K, V> {
@@ -255,9 +254,11 @@ class MutableValueObservableSet<K, V>(
     override val onCollectionAdd: MutableCollection<(value: V) -> Unit> = parent.onMapPut.mappingWriteOnly { callback ->
         { key, hadPrevious, previous, new -> if (!hadPrevious) callback.invoke(new) }
     }
+    @Suppress("UNCHECKED_CAST")
     override val onCollectionChange: MutableCollection<(old: V, new: V) -> Unit> = parent.onMapPut.mappingWriteOnly { callback ->
         { key, hadPrevious, previous, new -> if (hadPrevious) callback.invoke(previous as V, new) }
     }
+    @Suppress("UNCHECKED_CAST")
     override val onCollectionRemove: MutableCollection<(value: V) -> Unit> = object : MutableCollection<(V) -> Unit> {
         override val size: Int get() = parent.onMapPut.size + parent.onMapRemove.size
 

@@ -9,10 +9,10 @@ import kotlin.test.assertTrue
  */
 class FlatMappingObservableListTest {
 
-    fun makeTestList() = observableListOf(
-            observableListOf('a', 'b', 'c'),
-            observableListOf('e', 'f', 'g'),
-            observableListOf('h', 'i', 'j')
+    fun makeTestList() = mutableObservableListOf(
+            mutableObservableListOf('a', 'b', 'c'),
+            mutableObservableListOf('e', 'f', 'g'),
+            mutableObservableListOf('h', 'i', 'j')
     )
 
     @Test
@@ -38,7 +38,7 @@ class FlatMappingObservableListTest {
         val list = makeTestList()
         val flat = list.flatMapping { it }
 
-        val sublist = observableListOf('x', 'y', 'z')
+        val sublist = mutableObservableListOf('x', 'y', 'z')
         var currentIndex = 0
 
         flat.onListAdd += { char, index ->
@@ -115,7 +115,7 @@ class FlatMappingObservableListTest {
         val list = makeTestList()
         val flat = list.flatMapping { it }
 
-        val newList = observableListOf('x', 'y')
+        val newList = mutableObservableListOf('x', 'y')
         val oldList = list[1]
         var newIndex = 0
         var oldIndex = oldList.lastIndex
@@ -200,10 +200,10 @@ class FlatMappingObservableListTest {
 
     @Test
     fun addToEmptyCheckTest() {
-        val list = observableListOf(
-                observableListOf('a', 'b', 'c'),
-                observableListOf(),
-                observableListOf('h', 'i', 'j')
+        val list = mutableObservableListOf(
+                mutableObservableListOf('a', 'b', 'c'),
+                mutableObservableListOf(),
+                mutableObservableListOf('h', 'i', 'j')
         )
         val flat = list.flatMapping { it }
         println(flat.boundaryIndexes)
@@ -230,10 +230,10 @@ class FlatMappingObservableListTest {
 
     @Test
     fun removeMultipleTest() {
-        val multiple = observableListOf(
-                observableListOf('a', 'b', 'c', 'd'),
-                observableListOf('e', 'f', 'g'),
-                observableListOf('h', 'i', 'j')
+        val multiple = mutableObservableListOf(
+                mutableObservableListOf('a', 'b', 'c', 'd'),
+                mutableObservableListOf('e', 'f', 'g'),
+                mutableObservableListOf('h', 'i', 'j')
         )
         val flattened = multiple.flatMapping { it }
         flattened.onListAdd += {_, _ ->}

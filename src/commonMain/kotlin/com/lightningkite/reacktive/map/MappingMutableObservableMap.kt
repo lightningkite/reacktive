@@ -29,6 +29,7 @@ class MappingMutableObservableMap<AK, AV, BK, BV>(
             get() = value
 
         override fun setValue(newValue: AV): AV {
+            @Suppress("UNCHECKED_CAST")
             return mutableSource.put(key, newValue) as AV
         }
     }
@@ -38,6 +39,7 @@ class MappingMutableObservableMap<AK, AV, BK, BV>(
         override val value: BV
             get() = value
 
+        @Suppress("UNCHECKED_CAST")
         override fun setValue(newValue: BV): BV {
             return put(key, newValue) as BV
         }

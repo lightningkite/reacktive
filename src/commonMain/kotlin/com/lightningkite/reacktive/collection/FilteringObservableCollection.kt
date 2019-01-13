@@ -50,6 +50,7 @@ class FilteringObservableCollection<V>(
         override fun next(): V {
             advance()
             ready = false
+            @Suppress("UNCHECKED_CAST")
             return current as V
         }
 

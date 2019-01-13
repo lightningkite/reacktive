@@ -55,6 +55,7 @@ class WrapperObservableCollection<V>(val wraps: MutableCollection<V>): MutableOb
 
         override fun remove() {
             underlying.remove()
+            @Suppress("UNCHECKED_CAST")
             onCollectionRemove.invokeAll(last as V)
             onCollectionUpdate.update()
         }

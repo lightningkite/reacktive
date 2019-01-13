@@ -1,7 +1,7 @@
 package com.lightningkite.reacktive.set
 
-import com.lightningkite.reacktive.invokeAll
 import com.lightningkite.reacktive.collection.ObservableCollection
+import com.lightningkite.reacktive.invokeAll
 import com.lightningkite.reacktive.property.ReferenceObservableProperty
 import com.lightningkite.reacktive.property.update
 
@@ -49,6 +49,7 @@ class WrapperObservableSet<V>(val wraps: MutableSet<V> = HashSet()): MutableObse
 
         override fun remove() {
             underlying.remove()
+            @Suppress("UNCHECKED_CAST")
             onCollectionRemove.invokeAll(last as V)
             onCollectionUpdate.update()
         }

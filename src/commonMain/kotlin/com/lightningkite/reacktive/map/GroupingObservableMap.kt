@@ -1,9 +1,9 @@
 package com.lightningkite.reacktive.map
 
-import com.lightningkite.reacktive.invokeAll
 import com.lightningkite.reacktive.EnablingObject
 import com.lightningkite.reacktive.collection.MutableObservableCollection
 import com.lightningkite.reacktive.collection.ObservableCollection
+import com.lightningkite.reacktive.invokeAll
 import com.lightningkite.reacktive.property.ObservableProperty
 import com.lightningkite.reacktive.property.ReferenceObservableProperty
 import com.lightningkite.reacktive.property.update
@@ -197,6 +197,7 @@ class InnerCollection<E>(val enablingObject: EnablingObject, val wraps: MutableC
 
         override fun remove() {
             underlying.remove()
+            @Suppress("UNCHECKED_CAST")
             onCollectionRemove.invokeAll(last as E)
             onCollectionUpdate.update()
         }

@@ -108,24 +108,47 @@ class WrapperObservableList<E>(
     override fun isEmpty(): Boolean = collection.isEmpty()
     override fun contains(element: E): Boolean = collection.contains(element)
     override fun containsAll(elements: Collection<E>): Boolean = collection.containsAll(elements)
-    override fun listIterator(): MutableListIterator<E> = throw UnsupportedOperationException()
-    override fun listIterator(index: Int): MutableListIterator<E> = throw UnsupportedOperationException()
-    /**
-     * WARNING:
-     * This iterator MAY have issues when it removes things, because there is no way to know if the iterator is done with its work.
-     * It will not call onUpdate, and calls onRemove while iterating.
-     *
-     * YOU HAVE BEEN WARNED.
-     */
-    override fun iterator(): MutableIterator<E> = object : MutableIterator<E> {
-        val inner = collection.iterator()
+    override fun listIterator(): MutableListIterator<E> = listIterator(0)
+    override fun listIterator(index: Int): MutableListIterator<E> = object : MutableListIterator<E> {
+
+        val inner = collection.listIterator(index)
+        var cursor: Int = -1
         var lastIndex: Int = -1
         var lastElement: E? = null
+
+        override fun add(element: E) {
+            inner.add(element)
+            onListRemove.invokeAll(lastElement!!, cursor)
+            cursor++
+            lastIndex = -1
+            onListUpdate.update()
+        }
+
+        override fun hasPrevious(): Boolean = inner.hasPrevious()
+
+        override fun nextIndex(): Int = cursor
+
+        override fun previous(): E {
+            val element = inner.previous()
+            lastElement = element
+            lastIndex = cursor
+            cursor--
+            return element
+        }
+
+        override fun previousIndex(): Int = cursor - 1
+
+        override fun set(element: E) {
+            inner.set(element)
+            onListChange.invokeAll(lastElement!!, element, lastIndex)
+            onListUpdate.update()
+        }
         override fun hasNext(): Boolean = inner.hasNext()
         override fun next(): E {
             val element = inner.next()
             lastElement = element
-            lastIndex++
+            lastIndex = cursor
+            cursor++
             return element
         }
 
@@ -133,10 +156,13 @@ class WrapperObservableList<E>(
             inner.remove()
             onListRemove.invokeAll(lastElement!!, lastIndex)
             onListUpdate.update()
-            lastIndex--
+            cursor = lastIndex
+            lastIndex = -1
         }
 
     }
+
+    override fun iterator(): MutableIterator<E> = listIterator(0)
 
     override fun subList(fromIndex: Int, toIndex: Int): MutableList<E> = collection.subList(fromIndex, toIndex)
     override fun get(index: Int): E = collection[index]
@@ -159,5 +185,4 @@ class WrapperObservableList<E>(
     }
 }
 
-fun <E> observableListOf(vararg items: E) = WrapperObservableList(items.toMutableList())
 fun <E> MutableList<E>.observable() = WrapperObservableList(this)

@@ -1,7 +1,7 @@
 package com.lightningkite.reacktive.map
 
-import com.lightningkite.reacktive.invokeAll
 import com.lightningkite.reacktive.collection.MutableObservableCollection
+import com.lightningkite.reacktive.invokeAll
 import com.lightningkite.reacktive.property.ReferenceObservableProperty
 import com.lightningkite.reacktive.property.update
 import com.lightningkite.reacktive.set.MutableObservableSet
@@ -67,6 +67,7 @@ class WrapperObservableMap<K, V>(val wraps: MutableMap<K, V> = HashMap<K, V>()) 
         val previouslyHad = wraps.containsKey(key)
         return if(previouslyHad){
             val previous = wraps.remove(key)
+            @Suppress("UNCHECKED_CAST")
             onMapRemove.invokeAll(key, previous as V)
             onMapUpdate.update()
             previous
