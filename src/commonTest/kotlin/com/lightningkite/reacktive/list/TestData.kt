@@ -24,6 +24,8 @@ class TestData<E>(
             val manual = this.manualTransformed()
             assertTrue(transformed.size == manual.size)
             assertTrue(transformed deepEquals manual)
+            assertTrue(transformed.size == replicant.size)
+            assertTrue(transformed deepEquals replicant)
             replicant.check()
         } catch (t: Throwable) {
             println("!!! Failed for $label!!!")
