@@ -112,7 +112,7 @@ class WrapperObservableList<E>(
     override fun listIterator(index: Int): MutableListIterator<E> = object : MutableListIterator<E> {
 
         val inner = collection.listIterator(index)
-        var cursor: Int = -1
+        var cursor: Int = index
         var lastIndex: Int = -1
         var lastElement: E? = null
 
@@ -153,6 +153,7 @@ class WrapperObservableList<E>(
         }
 
         override fun remove() {
+            if (lastIndex == -1) throw IllegalStateException()
             inner.remove()
             onListRemove.invokeAll(lastElement!!, lastIndex)
             onListUpdate.update()
