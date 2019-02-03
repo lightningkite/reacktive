@@ -2,7 +2,7 @@
 
 By [Lightning Kite](https://lightningkite.com)
 
-A cross-platform library for reactive programming.
+A cross-addAsTarget library for reactive programming.
 
 Designed around using Kotlin's built-in types as much as possible to maximize compatibility with other projects.
 
@@ -36,7 +36,7 @@ What if we want to observe changes in a particular value?  Well, we've created a
 
 Sometimes we also want to observe changes in collections.  We've got that handled too.  The interface is called `ObservableList<T>` and the implementation you'll probably want to use is `WrapperObservableList<T>`.  There's a mutable variant of the interface as well.
 
-Also, handling when you want to listen can be painful and leak-prone, so we've made a solution.  Just use `Lifecycle`, which is a type alias for `ObservableProperty<Boolean>`, and you can use functions like `Lifecycle.listen(anEvent){}` to listen to the events only during the lifecycle, where the observable is on!  Now you just have to implement a lifecycle for your particular platform.
+Also, handling when you want to listen can be painful and leak-prone, so we've made a solution.  Just use `Lifecycle`, which is a type alias for `ObservableProperty<Boolean>`, and you can use functions like `Lifecycle.listen(anEvent){}` to listen to the events only during the lifecycle, where the observable is on!  Now you just have to implement a lifecycle for your particular addAsTarget.
 
 
 ## Tutorial
