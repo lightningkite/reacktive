@@ -2,9 +2,29 @@
 
 By [Lightning Kite](https://lightningkite.com)
 
-A cross-platform library for reactive programming.
+ Maven: [![Download](https://api.bintray.com/packages/lightningkite/com.lightningkite.krosslin/reacktive/images/download.svg) ](https://bintray.com/lightningkite/com.lightningkite.krosslin/reacktive/_latestVersion) 
+ 
+A cross-platform library for single-threaded observable programming.
 
 Designed around using Kotlin's built-in types as much as possible to maximize compatibility with other projects.
+
+```
+repositories {
+    maven { url 'https://dl.bintray.com/lightningkite/com.lightningkite.krosslin' }
+    ...
+}
+...
+dependencies {
+    ...
+    //Depending on the version you need
+    api "com.lightningkite:reacktive-metadata:${lokalizeVersion}"
+    api "com.lightningkite:reacktive-jvm:${lokalizeVersion}"
+    api "com.lightningkite:reacktive-js:${lokalizeVersion}"
+    api "com.lightningkite:reacktive-iosarm64:${lokalizeVersion}"
+    api "com.lightningkite:reacktive-iosx64:${lokalizeVersion}"
+    and more!
+}
+```
 
 ## Features
 
