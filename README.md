@@ -17,11 +17,11 @@ repositories {
 dependencies {
     ...
     //Depending on the version you need
-    api "com.lightningkite:reacktive-metadata:${lokalizeVersion}"
-    api "com.lightningkite:reacktive-jvm:${lokalizeVersion}"
-    api "com.lightningkite:reacktive-js:${lokalizeVersion}"
-    api "com.lightningkite:reacktive-iosarm64:${lokalizeVersion}"
-    api "com.lightningkite:reacktive-iosx64:${lokalizeVersion}"
+    api "com.lightningkite:reacktive-metadata:${reacktiveVersion}"
+    api "com.lightningkite:reacktive-jvm:${reacktiveVersion}"
+    api "com.lightningkite:reacktive-js:${reacktiveVersion}"
+    api "com.lightningkite:reacktive-iosarm64:${reacktiveVersion}"
+    api "com.lightningkite:reacktive-iosx64:${reacktiveVersion}"
     and more!
 }
 ```
