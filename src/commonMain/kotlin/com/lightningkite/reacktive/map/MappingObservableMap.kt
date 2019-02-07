@@ -1,6 +1,6 @@
 package com.lightningkite.reacktive.map
 
-import com.lightningkite.kommon.collection.mappingWriteOnly
+import com.lightningkite.reacktive.mapping.mappingWriteOnly
 import com.lightningkite.reacktive.collection.ObservableCollection
 import com.lightningkite.reacktive.collection.mapping
 import com.lightningkite.reacktive.property.ObservableProperty

@@ -1,8 +1,8 @@
 package com.lightningkite.reacktive.list
 
 
-import com.lightningkite.kommon.collection.mapping
-import com.lightningkite.kommon.collection.mappingWriteOnly
+import com.lightningkite.reacktive.mapping.mapping
+import com.lightningkite.reacktive.mapping.mappingWriteOnly
 import com.lightningkite.reacktive.property.transform
 
 /**

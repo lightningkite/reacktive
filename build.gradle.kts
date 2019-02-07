@@ -211,7 +211,7 @@ afterEvaluate {
 */
 
 plugins {
-    kotlin("multiplatform") version "1.3.20"
+    kotlin("multiplatform") version "1.3.21"
     `maven-publish`
 }
 

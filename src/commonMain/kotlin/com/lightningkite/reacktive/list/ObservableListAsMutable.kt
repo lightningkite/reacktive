@@ -1,6 +1,6 @@
 package com.lightningkite.reacktive.list
 
-import com.lightningkite.kommon.collection.asMutable
+import com.lightningkite.reacktive.mapping.asMutable
 
 /**
  * Makes an observable collection mutable.

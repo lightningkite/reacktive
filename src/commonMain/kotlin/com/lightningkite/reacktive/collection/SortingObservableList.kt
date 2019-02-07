@@ -1,6 +1,6 @@
 package com.lightningkite.reacktive.collection
 
-import com.lightningkite.kommon.collection.addSorted
+import com.lightningkite.reacktive.mapping.addSorted
 import com.lightningkite.reacktive.invokeAll
 import com.lightningkite.reacktive.list.EnablingObservableList
 import com.lightningkite.reacktive.list.MutableObservableList

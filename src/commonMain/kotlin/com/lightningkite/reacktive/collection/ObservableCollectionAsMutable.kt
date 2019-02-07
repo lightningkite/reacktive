@@ -1,6 +1,6 @@
 package com.lightningkite.reacktive.collection
 
-import com.lightningkite.kommon.collection.asMutable
+import com.lightningkite.reacktive.mapping.asMutable
 import com.lightningkite.reacktive.property.ObservableProperty
 
 

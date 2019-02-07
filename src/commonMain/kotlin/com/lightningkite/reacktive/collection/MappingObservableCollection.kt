@@ -1,8 +1,8 @@
 package com.lightningkite.reacktive.collection
 
-import com.lightningkite.kommon.collection.mapping
-import com.lightningkite.kommon.collection.mappingMutable
-import com.lightningkite.kommon.collection.mappingWriteOnly
+import com.lightningkite.reacktive.mapping.mapping
+import com.lightningkite.reacktive.mapping.mappingMutable
+import com.lightningkite.reacktive.mapping.mappingWriteOnly
 import com.lightningkite.reacktive.property.ObservableProperty
 import com.lightningkite.reacktive.property.transform
 
