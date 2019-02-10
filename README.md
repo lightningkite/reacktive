@@ -2,9 +2,29 @@
 
 By [Lightning Kite](https://lightningkite.com)
 
-A cross-addAsTarget library for reactive programming.
+ Maven: [![Download](https://api.bintray.com/packages/lightningkite/com.lightningkite.krosslin/reacktive/images/download.svg) ](https://bintray.com/lightningkite/com.lightningkite.krosslin/reacktive/_latestVersion) 
+ 
+A cross-platform library for single-threaded observable programming.
 
 Designed around using Kotlin's built-in types as much as possible to maximize compatibility with other projects.
+
+```
+repositories {
+    maven { url 'https://dl.bintray.com/lightningkite/com.lightningkite.krosslin' }
+    ...
+}
+...
+dependencies {
+    ...
+    //Depending on the version you need
+    api "com.lightningkite:reacktive-metadata:${reacktiveVersion}"
+    api "com.lightningkite:reacktive-jvm:${reacktiveVersion}"
+    api "com.lightningkite:reacktive-js:${reacktiveVersion}"
+    api "com.lightningkite:reacktive-iosarm64:${reacktiveVersion}"
+    api "com.lightningkite:reacktive-iosx64:${reacktiveVersion}"
+    and more!
+}
+```
 
 ## Features
 
@@ -36,7 +56,7 @@ What if we want to observe changes in a particular value?  Well, we've created a
 
 Sometimes we also want to observe changes in collections.  We've got that handled too.  The interface is called `ObservableList<T>` and the implementation you'll probably want to use is `WrapperObservableList<T>`.  There's a mutable variant of the interface as well.
 
-Also, handling when you want to listen can be painful and leak-prone, so we've made a solution.  Just use `Lifecycle`, which is a type alias for `ObservableProperty<Boolean>`, and you can use functions like `Lifecycle.listen(anEvent){}` to listen to the events only during the lifecycle, where the observable is on!  Now you just have to implement a lifecycle for your particular addAsTarget.
+Also, handling when you want to listen can be painful and leak-prone, so we've made a solution.  Just use `Lifecycle`, which is a type alias for `ObservableProperty<Boolean>`, and you can use functions like `Lifecycle.listen(anEvent){}` to listen to the events only during the lifecycle, where the observable is on!  Now you just have to implement a lifecycle for your particular platform.
 
 
 ## Tutorial
