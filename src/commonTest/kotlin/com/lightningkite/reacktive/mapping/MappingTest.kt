@@ -1,5 +1,6 @@
 package com.lightningkite.reacktive.mapping
 
+import com.lightningkite.kommon.collection.contentEquals
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
