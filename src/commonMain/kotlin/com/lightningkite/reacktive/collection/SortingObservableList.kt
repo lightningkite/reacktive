@@ -5,6 +5,7 @@ import com.lightningkite.reacktive.invokeAll
 import com.lightningkite.reacktive.list.EnablingObservableList
 import com.lightningkite.reacktive.list.MutableObservableList
 
+//TODO: Back with SortedBag (?)
 class SortingObservableList<V>(
         val source: MutableObservableCollection<V>,
         val comparator: Comparator<V>
