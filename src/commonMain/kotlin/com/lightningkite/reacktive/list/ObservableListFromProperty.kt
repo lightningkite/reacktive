@@ -29,8 +29,8 @@ class ObservableListFromProperty<E>(val property: ObservableProperty<List<E>>) :
     override fun subList(fromIndex: Int, toIndex: Int): List<E> = property.value.subList(fromIndex, toIndex)
 
     val listener = { list: List<E> ->
-        onCollectionReplace.invokeAll(this)
-        onCollectionUpdate.update()
+        onListReplace.invokeAll(this)
+        onListUpdate.update()
     }
 
     override fun enable() {
