@@ -1,6 +1,7 @@
 package com.lightningkite.reacktive.list
 
 import com.lightningkite.reacktive.invokeAll
+import com.lightningkite.reacktive.property.MutableObservableProperty
 import com.lightningkite.reacktive.property.ObservableProperty
 import com.lightningkite.reacktive.property.update
 
