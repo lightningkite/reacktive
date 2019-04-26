@@ -1,6 +1,3 @@
-
-
-
 package com.lightningkite.reacktive.property
 
 import com.lightningkite.reacktive.EnablingMutableCollection
