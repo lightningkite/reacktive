@@ -3,6 +3,8 @@ package com.lightningkite.reacktive.list
 
 import com.lightningkite.reacktive.mapping.mappingWriteOnly
 import com.lightningkite.reacktive.collection.ObservableCollection
+import com.lightningkite.reacktive.event.Event
+import com.lightningkite.reacktive.event.map
 import com.lightningkite.reacktive.property.ObservableProperty
 import com.lightningkite.reacktive.property.transform
 
@@ -11,24 +13,15 @@ import com.lightningkite.reacktive.property.transform
  * Created by josep on 9/7/2015.
  */
 interface ObservableList<E> : List<E>, ObservableCollection<E> {
-    val onListAdd: MutableCollection<(E, Int) -> Unit>
-    val onListChange: MutableCollection<(E, E, Int) -> Unit>
-    val onListMove: MutableCollection<(E, Int, Int) -> Unit>
-    val onListRemove: MutableCollection<(E, Int) -> Unit>
-    val onListReplace: MutableCollection<(ObservableList<E>) -> Unit>
-    val onListUpdate: ObservableProperty<ObservableList<E>>
-
-    override val onCollectionAdd: MutableCollection<(value: E) -> Unit> get() = onListAdd.mappingWriteOnly { callback ->
-        { item, index -> callback.invoke(item) }
-    }
-    override val onCollectionChange: MutableCollection<(old: E, new: E) -> Unit> get() = onListChange.mappingWriteOnly { callback ->
-        { old, item, index -> callback.invoke(old, item) }
-    }
-    override val onCollectionRemove: MutableCollection<(value: E) -> Unit> get() = onListRemove.mappingWriteOnly { callback ->
-        { item, index -> callback.invoke(item) }
-    }
-    override val onCollectionUpdate: ObservableProperty<ObservableCollection<E>> get() = onListUpdate.transform { this }
-    override val onCollectionReplace: MutableCollection<(ObservableCollection<E>) -> Unit> get() = onListReplace.mappingWriteOnly { callback ->
-        { list -> callback.invoke(this) }
-    }
+    val onListAdd: Event<Pair<E, Int>>
+    val onListChange: Event<Triple<E, E, Int>>
+    val onListMove: Event<Triple<E, Int, Int>>
+    val onListRemove: Event<Pair<E, Int>>
+    val onListReplace: Event<ObservableList<E>>
+    override val value: ObservableList<E> get() = this
+    override val onCollectionAdd: Event<E> get() = onListAdd.map { it.first }
+    override val onCollectionChange: Event<Pair<E, E>> get() = onListChange.map { it.first to it.second }
+    override val onCollectionRemove: Event<E> get() = onListRemove.map { it.first }
+    override val onCollectionReplace: Event<ObservableCollection<E>> get() = onListReplace.map { this }
+    override val onChange: Event<ObservableList<E>>
 }

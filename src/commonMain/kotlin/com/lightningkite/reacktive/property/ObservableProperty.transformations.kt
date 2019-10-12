@@ -6,7 +6,6 @@ import com.lightningkite.reacktive.event.*
 import kotlin.jvm.JvmName
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KMutableProperty1
-import kotlin.reflect.KProperty0
 
 fun <T> KMutableProperty0<T>.observableProperty() = object: MutableObservableProperty<T> {
     override val onChange = StandardEvent<T>()
@@ -14,7 +13,7 @@ fun <T> KMutableProperty0<T>.observableProperty() = object: MutableObservablePro
         get() = this@observableProperty.get()
         set(value) {
             this@observableProperty.set(value)
-            onChange.invokeAll(value)
+            onChange.invoke(value)
         }
 }
 
@@ -24,7 +23,7 @@ fun <R, T> KMutableProperty1<R, T>.observableProperty(receiver: R) = object: Mut
         get() = this@observableProperty.get(receiver)
         set(value) {
             this@observableProperty.set(receiver, value)
-            onChange.invokeAll(value)
+            onChange.invoke(value)
         }
 }
 

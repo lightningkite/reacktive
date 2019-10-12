@@ -20,6 +20,6 @@ open class StandardObservableProperty<T>(
     override var value: T = value
         set(value) {
             field = value
-            _onChange.invokeAll(value)
+            _onChange.invoke(value)
         }
 }

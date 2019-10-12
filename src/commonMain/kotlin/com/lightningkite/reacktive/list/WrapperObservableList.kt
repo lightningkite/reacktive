@@ -1,9 +1,9 @@
 package com.lightningkite.reacktive.list
 
 
-import com.lightningkite.reacktive.invokeAll
-import com.lightningkite.reacktive.property.ReferenceObservableProperty
-import com.lightningkite.reacktive.property.update
+import com.lightningkite.reacktive.collection.ObservableCollection
+import com.lightningkite.reacktive.event.Event
+import com.lightningkite.reacktive.event.StandardEvent
 
 /**
  * Allows you to observe the changes to a list.
@@ -13,18 +13,32 @@ class WrapperObservableList<E>(
         val collection: MutableList<E> = mutableListOf()
 ) : MutableObservableList<E> {
 
-    override val onListAdd = HashSet<(E, Int) -> Unit>()
-    override val onListChange = HashSet<(E, E, Int) -> Unit>()
-    override val onListMove = HashSet<(E, Int, Int) -> Unit>()
-    override val onListUpdate = ReferenceObservableProperty<ObservableList<E>>({ this@WrapperObservableList }, { replace(it) })
-    override val onListReplace = HashSet<(ObservableList<E>) -> Unit>()
-    override val onListRemove = HashSet<(E, Int) -> Unit>()
+    private val _onListAdd = StandardEvent<Pair<E, Int>>()
+    override val onListAdd: Event<Pair<E, Int>> get() = _onListAdd
+    private val _onListChange = StandardEvent<Triple<E, E, Int>>()
+    override val onListChange: Event<Triple<E, E, Int>> get() = _onListChange
+    private val _onListMove = StandardEvent<Triple<E, Int, Int>>()
+    override val onListMove: Event<Triple<E, Int, Int>> get() = _onListMove
+    private val _onListRemove = StandardEvent<Pair<E, Int>>()
+    override val onListRemove: Event<Pair<E, Int>> get() = _onListRemove
+    private val _onListReplace = StandardEvent<ObservableList<E>>()
+    override val onListReplace: Event<ObservableList<E>> get() = _onListReplace
+
+    private val _onChange = StandardEvent<ObservableList<E>>()
+    override val onChange: Event<ObservableList<E>> get() = _onChange
+
+    override fun updateAt(index: Int) {
+        _onListChange {
+            val value = this[index]
+            Triple(value, value, index)
+        }
+    }
 
     override fun set(index: Int, element: E): E {
         val old = collection[index]
         collection[index] = element
-        onListChange.invokeAll(old, element, index)
-        onListUpdate.update()
+        _onListChange { Triple(old, element, index) }
+        _onChange(this)
         return element
     }
 
@@ -32,26 +46,26 @@ class WrapperObservableList<E>(
         val result = collection.add(element)
         val index = collection.size - 1
         if (result) {
-            onListAdd.invokeAll(element, index)
-            onListUpdate.update()
+            _onListAdd { element to index }
+            _onChange(this)
         }
         return result
     }
 
     override fun add(index: Int, element: E) {
         collection.add(index, element)
-        onListAdd.invokeAll(element, index)
-        onListUpdate.update()
+        _onListAdd { element to index }
+        _onChange(this)
     }
 
     override fun addAll(elements: Collection<E>): Boolean {
         var index = collection.size
         for (e in elements) {
             collection.add(e)
-            onListAdd.invokeAll(e, index)
+            _onListAdd { e to index }
             index++
         }
-        onListUpdate.update()
+        _onChange(this)
         return true
     }
 
@@ -59,10 +73,10 @@ class WrapperObservableList<E>(
         var currentIndex = index
         for (e in elements) {
             collection.add(currentIndex, e)
-            onListAdd.invokeAll(e, currentIndex)
+            _onListAdd { e to currentIndex }
             currentIndex++
         }
-        onListUpdate.update()
+        _onChange(this)
         return true
     }
 
@@ -71,15 +85,15 @@ class WrapperObservableList<E>(
         val index = indexOf(element)
         if (index == -1) return false
         collection.removeAt(index)
-        onListRemove.invokeAll(element, index)
-        onListUpdate.update()
+        _onListRemove { element to index }
+        _onChange(this)
         return true
     }
 
     override fun removeAt(index: Int): E {
         val element = collection.removeAt(index)
-        onListRemove.invokeAll(element, index)
-        onListUpdate.update()
+        _onListRemove { element to index }
+        _onChange(this)
         return element
     }
 
@@ -89,9 +103,9 @@ class WrapperObservableList<E>(
             val index = indexOf(element)
             if (index == -1) return false
             collection.removeAt(index)
-            onListRemove.invokeAll(element, index)
+            _onListRemove { element to index }
         }
-        onListUpdate.update()
+        _onChange(this)
         return true
     }
 
@@ -101,8 +115,8 @@ class WrapperObservableList<E>(
 
     override fun clear() {
         collection.clear()
-        onListReplace.invokeAll(this)
-        onListUpdate.update()
+        _onListReplace(this)
+        _onChange(this)
     }
 
     override fun isEmpty(): Boolean = collection.isEmpty()
@@ -118,10 +132,10 @@ class WrapperObservableList<E>(
 
         override fun add(element: E) {
             inner.add(element)
-            onListRemove.invokeAll(lastElement!!, cursor)
+            _onListAdd { lastElement!! to cursor }
             cursor++
             lastIndex = -1
-            onListUpdate.update()
+            _onChange(this@WrapperObservableList)
         }
 
         override fun hasPrevious(): Boolean = inner.hasPrevious()
@@ -140,9 +154,10 @@ class WrapperObservableList<E>(
 
         override fun set(element: E) {
             inner.set(element)
-            onListChange.invokeAll(lastElement!!, element, lastIndex)
-            onListUpdate.update()
+            _onListChange { Triple(lastElement!!, element, lastIndex) }
+            _onChange(this@WrapperObservableList)
         }
+
         override fun hasNext(): Boolean = inner.hasNext()
         override fun next(): E {
             val element = inner.next()
@@ -155,8 +170,10 @@ class WrapperObservableList<E>(
         override fun remove() {
             if (lastIndex == -1) throw IllegalStateException()
             inner.remove()
-            onListRemove.invokeAll(lastElement!!, lastIndex)
-            onListUpdate.update()
+            _onListRemove {
+                lastElement!! to lastIndex
+            }
+            _onChange(this@WrapperObservableList)
             cursor = lastIndex
             lastIndex = -1
         }
@@ -174,15 +191,15 @@ class WrapperObservableList<E>(
     override fun replace(collection: Collection<E>) {
         this.collection.clear()
         this.collection.addAll(collection)
-        onListReplace.invokeAll(this)
-        onListUpdate.update()
+        _onListReplace(this)
+        _onChange(this)
     }
 
     override fun move(fromIndex: Int, toIndex: Int) {
         val item = collection.removeAt(fromIndex)
         collection.add(toIndex, item)
-        onListMove.invokeAll(item, fromIndex, toIndex)
-        onListUpdate.update()
+        _onListMove { Triple(item, fromIndex, toIndex) }
+        _onChange(this)
     }
 }
 
