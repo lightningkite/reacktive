@@ -2,10 +2,7 @@ package com.lightningkite.reacktive.collection
 
 import com.lightningkite.reacktive.event.*
 import com.lightningkite.reacktive.invokeAll
-import com.lightningkite.reacktive.property.ConstantObservableProperty
-import com.lightningkite.reacktive.property.MutableObservableProperty
-import com.lightningkite.reacktive.property.ObservableProperty
-import com.lightningkite.reacktive.property.combine
+import com.lightningkite.reacktive.property.*
 
 class FilteringObservableCollection<V>(
         val source: ObservableCollection<V>,
@@ -13,7 +10,7 @@ class FilteringObservableCollection<V>(
 ) : ObservableCollection<V> {
     override var size: Int = 0
 
-    private val filterPrevious = filter.onChange.withPrevious(filter.value)
+    private val filterPrevious = filter.onChangeWithPrevious()
     override val onCollectionAdd: Event<V> = combine(
             source.onCollectionAdd.filter(filter.value),
             source.onCollectionChange.filter { !filter.value(it.first) && filter.value(it.second) }.map { it.second },

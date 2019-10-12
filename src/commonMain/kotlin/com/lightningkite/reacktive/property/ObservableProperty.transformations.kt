@@ -7,6 +7,8 @@ import kotlin.jvm.JvmName
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KMutableProperty1
 
+fun <T> ObservableProperty<T>.onChangeWithPrevious() = onChange.withPrevious(value)
+
 fun <T> KMutableProperty0<T>.observableProperty() = object: MutableObservableProperty<T> {
     override val onChange = StandardEvent<T>()
     override var value: T
