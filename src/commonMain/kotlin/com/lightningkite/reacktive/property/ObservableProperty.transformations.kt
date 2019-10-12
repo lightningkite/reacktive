@@ -2,10 +2,7 @@ package com.lightningkite.reacktive.property
 
 import com.lightningkite.kommon.Closeable
 import com.lightningkite.kommon.CloseableLambda
-import com.lightningkite.reacktive.event.Event
-import com.lightningkite.reacktive.event.StandardEvent
-import com.lightningkite.reacktive.event.combine
-import com.lightningkite.reacktive.event.map
+import com.lightningkite.reacktive.event.*
 import kotlin.jvm.JvmName
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KMutableProperty1
@@ -65,7 +62,7 @@ fun <A, B, C, Z> combine(a: ObservableProperty<A>, b: ObservableProperty<B>, c: 
 
 fun <T> combine(vararg properties: ObservableProperty<*>, transform: ()->T): ObservableProperty<T> = object: ObservableProperty<T> {
     override val onChange: Event<T>
-        get() = combine(*properties.map { it.onChange }.toTypedArray()).map { transform() }
+        get() = combineUntyped(*properties.map { it.onChange }.toTypedArray()).map { transform() }
     override val value: T
         get() = transform()
 }

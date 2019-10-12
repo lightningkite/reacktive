@@ -30,6 +30,23 @@ fun <A> Event<A>.filter(allow:(A)->Boolean): Event<A> = object : Event<A> {
 fun <A: Any> Event<A?>.filterNotNull(): Event<A> = object : Event<A> {
     override fun listen(listener: (A) -> Unit): Closeable = this@filterNotNull.listen { it?.let(listener) }
 }
+fun <A, B> Event<A>.multiMap(transform:(A)->Iterable<B>): Event<B> = object : Event<B> {
+    override fun listen(listener: (B) -> Unit): Closeable = this@multiMap.listen {
+        transform(it).forEach(listener)
+    }
+}
+fun <A> Event<A>.withPrevious(initial: A): Event<Pair<A, A>> = object : Event<Pair<A, A>> {
+    var previous = initial
+    var current = initial
+    override fun listen(listener: (Pair<A, A>) -> Unit): Closeable = this@withPrevious.listen {
+        if(it == current) previous to current
+        else {
+            previous = current
+            current = it
+            previous to it
+        }
+    }
+}
 
 fun <A, B, Z> combine(
         a: Event<A>,
