@@ -18,7 +18,6 @@ interface ObservableList<E> : List<E>, ObservableCollection<E> {
     val onListMove: Event<Triple<E, Int, Int>>
     val onListRemove: Event<Pair<E, Int>>
     val onListReplace: Event<ObservableList<E>>
-    override val value: ObservableList<E> get() = this
     override val onCollectionAdd: Event<E> get() = onListAdd.map { it.first }
     override val onCollectionChange: Event<Pair<E, E>> get() = onListChange.map { it.first to it.second }
     override val onCollectionRemove: Event<E> get() = onListRemove.map { it.first }

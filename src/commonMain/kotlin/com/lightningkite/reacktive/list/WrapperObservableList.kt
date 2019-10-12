@@ -1,16 +1,16 @@
 package com.lightningkite.reacktive.list
 
 
-import com.lightningkite.reacktive.collection.ObservableCollection
 import com.lightningkite.reacktive.event.Event
 import com.lightningkite.reacktive.event.StandardEvent
+import com.lightningkite.reacktive.event.invoke
 
 /**
  * Allows you to observe the changes to a list.
  * Created by josep on 9/7/2015.
  */
 class WrapperObservableList<E>(
-        val collection: MutableList<E> = mutableListOf()
+        val list: MutableList<E> = mutableListOf()
 ) : MutableObservableList<E> {
 
     private val _onListAdd = StandardEvent<Pair<E, Int>>()
@@ -28,23 +28,23 @@ class WrapperObservableList<E>(
     override val onChange: Event<ObservableList<E>> get() = _onChange
 
     override fun updateAt(index: Int) {
-        _onListChange {
+        _onListChange.invoke {
             val value = this[index]
             Triple(value, value, index)
         }
     }
 
     override fun set(index: Int, element: E): E {
-        val old = collection[index]
-        collection[index] = element
+        val old = list[index]
+        list[index] = element
         _onListChange { Triple(old, element, index) }
         _onChange(this)
         return element
     }
 
     override fun add(element: E): Boolean {
-        val result = collection.add(element)
-        val index = collection.size - 1
+        val result = list.add(element)
+        val index = list.size - 1
         if (result) {
             _onListAdd { element to index }
             _onChange(this)
@@ -53,15 +53,15 @@ class WrapperObservableList<E>(
     }
 
     override fun add(index: Int, element: E) {
-        collection.add(index, element)
+        list.add(index, element)
         _onListAdd { element to index }
         _onChange(this)
     }
 
     override fun addAll(elements: Collection<E>): Boolean {
-        var index = collection.size
+        var index = list.size
         for (e in elements) {
-            collection.add(e)
+            list.add(e)
             _onListAdd { e to index }
             index++
         }
@@ -72,7 +72,7 @@ class WrapperObservableList<E>(
     override fun addAll(index: Int, elements: Collection<E>): Boolean {
         var currentIndex = index
         for (e in elements) {
-            collection.add(currentIndex, e)
+            list.add(currentIndex, e)
             _onListAdd { e to currentIndex }
             currentIndex++
         }
@@ -84,14 +84,14 @@ class WrapperObservableList<E>(
     override fun remove(element: E): Boolean {
         val index = indexOf(element)
         if (index == -1) return false
-        collection.removeAt(index)
+        list.removeAt(index)
         _onListRemove { element to index }
         _onChange(this)
         return true
     }
 
     override fun removeAt(index: Int): E {
-        val element = collection.removeAt(index)
+        val element = list.removeAt(index)
         _onListRemove { element to index }
         _onChange(this)
         return element
@@ -102,7 +102,7 @@ class WrapperObservableList<E>(
         for (element in elements) {
             val index = indexOf(element)
             if (index == -1) return false
-            collection.removeAt(index)
+            list.removeAt(index)
             _onListRemove { element to index }
         }
         _onChange(this)
@@ -114,18 +114,18 @@ class WrapperObservableList<E>(
     }
 
     override fun clear() {
-        collection.clear()
+        list.clear()
         _onListReplace(this)
         _onChange(this)
     }
 
-    override fun isEmpty(): Boolean = collection.isEmpty()
-    override fun contains(element: E): Boolean = collection.contains(element)
-    override fun containsAll(elements: Collection<E>): Boolean = collection.containsAll(elements)
+    override fun isEmpty(): Boolean = list.isEmpty()
+    override fun contains(element: E): Boolean = list.contains(element)
+    override fun containsAll(elements: Collection<E>): Boolean = list.containsAll(elements)
     override fun listIterator(): MutableListIterator<E> = listIterator(0)
     override fun listIterator(index: Int): MutableListIterator<E> = object : MutableListIterator<E> {
 
-        val inner = collection.listIterator(index)
+        val inner = list.listIterator(index)
         var cursor: Int = index
         var lastIndex: Int = -1
         var lastElement: E? = null
@@ -182,25 +182,29 @@ class WrapperObservableList<E>(
 
     override fun iterator(): MutableIterator<E> = listIterator(0)
 
-    override fun subList(fromIndex: Int, toIndex: Int): MutableList<E> = collection.subList(fromIndex, toIndex)
-    override fun get(index: Int): E = collection[index]
-    override fun indexOf(element: E): Int = collection.indexOf(element)
-    override fun lastIndexOf(element: E): Int = collection.lastIndexOf(element)
-    override val size: Int get() = collection.size
+    override fun subList(fromIndex: Int, toIndex: Int): MutableList<E> = list.subList(fromIndex, toIndex)
+    override fun get(index: Int): E = list[index]
+    override fun indexOf(element: E): Int = list.indexOf(element)
+    override fun lastIndexOf(element: E): Int = list.lastIndexOf(element)
+    override val size: Int get() = list.size
 
     override fun replace(collection: Collection<E>) {
-        this.collection.clear()
-        this.collection.addAll(collection)
+        this.list.clear()
+        this.list.addAll(collection)
         _onListReplace(this)
         _onChange(this)
     }
 
     override fun move(fromIndex: Int, toIndex: Int) {
-        val item = collection.removeAt(fromIndex)
-        collection.add(toIndex, item)
+        val item = list.removeAt(fromIndex)
+        list.add(toIndex, item)
         _onListMove { Triple(item, fromIndex, toIndex) }
         _onChange(this)
     }
 }
 
+@Deprecated(
+        message = "It is suggested that you either construct this class manually or just create an observable list properly in the first place using `observableListOf()` or `StandardObservableList()`",
+        replaceWith = ReplaceWith("WrapperObservableList(this)", "com.lightningkite.reacktive.list.WrapperObservableList")
+)
 fun <E> MutableList<E>.observable() = WrapperObservableList(this)

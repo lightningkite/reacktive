@@ -2,6 +2,7 @@ package com.lightningkite.reacktive.collection
 
 import com.lightningkite.reacktive.event.Event
 import com.lightningkite.reacktive.event.StandardEvent
+import com.lightningkite.reacktive.event.invoke
 
 class WrapperObservableCollection<V>(val wraps: MutableCollection<V>): MutableObservableCollection<V> {
     private val _onCollectionAdd = StandardEvent<V>()
