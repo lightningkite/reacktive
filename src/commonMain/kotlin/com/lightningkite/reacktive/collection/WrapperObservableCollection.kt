@@ -1,18 +1,29 @@
 package com.lightningkite.reacktive.collection
 
+import com.lightningkite.reacktive.event.Event
+import com.lightningkite.reacktive.event.StandardEvent
 import com.lightningkite.reacktive.invokeAll
-import com.lightningkite.reacktive.property.ReferenceObservableProperty
-import com.lightningkite.reacktive.property.update
 
 class WrapperObservableCollection<V>(val wraps: MutableCollection<V>): MutableObservableCollection<V> {
+    private val _onCollectionAdd = StandardEvent<V>()
+    override val onCollectionAdd: Event<V> get() = _onCollectionAdd
+    private val _onCollectionChange = StandardEvent<Pair<V, V>>()
+    override val onCollectionChange: Event<Pair<V, V>> get() = _onCollectionChange
+    private val _onCollectionRemove = StandardEvent<V>()
+    override val onCollectionRemove: Event<V> get() = _onCollectionRemove
+    private val _onCollectionReplace = StandardEvent<ObservableCollection<V>>()
+    override val onCollectionReplace: Event<ObservableCollection<V>> get() = _onCollectionReplace
+    private val _onChange = StandardEvent<ObservableCollection<V>>()
+    override val onChange: Event<ObservableCollection<V>> get() = _onChange
+
     override val size: Int get() = wraps.size
     override fun contains(element: V): Boolean = wraps.contains(element)
     override fun containsAll(elements: Collection<V>): Boolean = wraps.containsAll(elements)
     override fun isEmpty(): Boolean = wraps.isEmpty()
     override fun add(element: V): Boolean {
         return if(wraps.add(element)){
-            onCollectionAdd.invokeAll(element)
-            onCollectionUpdate.update()
+            _onCollectionAdd.invokeAll(element)
+            _onChange.invokeAll(this)
             true
         } else {
             false
@@ -22,8 +33,8 @@ class WrapperObservableCollection<V>(val wraps: MutableCollection<V>): MutableOb
     override fun change(old: V, new: V) {
         remove(old)
         add(new)
-        onCollectionChange.invokeAll(old, new)
-        onCollectionUpdate.update()
+        _onCollectionChange.invokeAllLazy { old to new }
+        _onChange.invokeAll(this)
     }
 
     override fun addAll(elements: Collection<V>): Boolean {
@@ -36,8 +47,8 @@ class WrapperObservableCollection<V>(val wraps: MutableCollection<V>): MutableOb
 
     override fun clear() {
         wraps.clear()
-        onCollectionReplace.invokeAll(this)
-        onCollectionUpdate.update()
+        _onCollectionReplace.invokeAll(this)
+        _onChange.invokeAll(this)
     }
 
     override fun iterator(): MutableIterator<V> = object : MutableIterator<V> {
@@ -56,15 +67,15 @@ class WrapperObservableCollection<V>(val wraps: MutableCollection<V>): MutableOb
         override fun remove() {
             underlying.remove()
             @Suppress("UNCHECKED_CAST")
-            onCollectionRemove.invokeAll(last as V)
-            onCollectionUpdate.update()
+            _onCollectionRemove.invokeAll(last as V)
+            _onChange.invokeAll(this@WrapperObservableCollection)
         }
     }
 
     override fun remove(element: V): Boolean {
         return if(wraps.remove(element)){
-            onCollectionRemove.invokeAll(element)
-            onCollectionUpdate.update()
+            _onCollectionRemove.invokeAll(element)
+            _onChange.invokeAll(this)
             true
         } else {
             false
@@ -81,8 +92,8 @@ class WrapperObservableCollection<V>(val wraps: MutableCollection<V>): MutableOb
 
     override fun retainAll(elements: Collection<V>): Boolean {
         return if(wraps.retainAll(elements)){
-            onCollectionReplace.invokeAll(this)
-            onCollectionUpdate.update()
+            _onCollectionReplace.invokeAll(this)
+            _onChange.invokeAll(this)
             true
         } else {
             false
@@ -92,15 +103,9 @@ class WrapperObservableCollection<V>(val wraps: MutableCollection<V>): MutableOb
     override fun replace(collection: Collection<V>) {
         wraps.clear()
         wraps.addAll(collection)
-        onCollectionReplace.invokeAll(this)
-        onCollectionUpdate.update()
+        _onCollectionReplace.invokeAll(this)
+        _onChange.invokeAll(this)
     }
-
-    override val onCollectionAdd: MutableCollection<(value: V) -> Unit> = ArrayList()
-    override val onCollectionChange: MutableCollection<(old: V, new: V) -> Unit> = ArrayList()
-    override val onCollectionRemove: MutableCollection<(value: V) -> Unit> = ArrayList()
-    override val onCollectionUpdate = ReferenceObservableProperty<ObservableCollection<V>>({ this@WrapperObservableCollection }, { replace(it) })
-    override val onCollectionReplace: MutableCollection<(ObservableCollection<V>) -> Unit> = ArrayList()
 }
 
 fun <E> MutableCollection<E>.observable() = WrapperObservableCollection(this)

@@ -5,7 +5,7 @@ import com.lightningkite.reacktive.mapping.mappingWriteOnly
 import com.lightningkite.reacktive.property.ObservableProperty
 import com.lightningkite.reacktive.property.transform
 
-class MappingMutableObservableCollection<A, B>(
+internal class MappingMutableObservableCollection<A, B>(
         val mutableSource: MutableObservableCollection<A>,
         transform: (A)->B,
         reverse: (B)->A
@@ -21,6 +21,6 @@ class MappingMutableObservableCollection<A, B>(
     override fun retainAll(elements: Collection<B>): Boolean = mutableSource.retainAll(elements.map(reverse))
 }
 
-fun <S, E> MutableObservableCollection<S>.mapping(read: (S) -> E, write: (E) -> S) = MappingMutableObservableCollection<S, E>(this, read, write)
-fun <S, E> MutableObservableCollection<S>.mapping(read: (S) -> E) = MappingMutableObservableCollection(this, read) { throw IllegalArgumentException() }
+fun <S, E> MutableObservableCollection<S>.mapping(read: (S) -> E, write: (E) -> S): MutableObservableCollection<E> = MappingMutableObservableCollection<S, E>(this, read, write)
+fun <S, E> MutableObservableCollection<S>.mapping(read: (S) -> E): MutableObservableCollection<E> = MappingMutableObservableCollection(this, read) { throw IllegalArgumentException() }
 

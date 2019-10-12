@@ -1,10 +1,8 @@
 package com.lightningkite.reacktive
 
+import com.lightningkite.reacktive.event.Event
 import com.lightningkite.reacktive.property.ObservableProperty
 
-typealias Event0 = MutableCollection<()->Unit>
-typealias Event<A> = MutableCollection<(A)->Unit>
-typealias Event1<A> = MutableCollection<(A)->Unit>
-typealias Event2<A, B> = MutableCollection<(A, B)->Unit>
-typealias Event3<A, B, C> = MutableCollection<(A, B, C)->Unit>
+@Deprecated("Use the one from the event package instead", ReplaceWith("Event<A>", "com.lightningkite.reacktive.event.Event"))
+typealias Event<A> = Event<A>
 typealias Lifecycle = ObservableProperty<Boolean>

@@ -1,15 +1,14 @@
 package com.lightningkite.reacktive.collection
 
+import com.lightningkite.reacktive.event.Event
 import com.lightningkite.reacktive.property.ObservableProperty
 
 
-interface ObservableCollection<V> : Collection<V> {
-    val onCollectionAdd: MutableCollection<(value: V) -> Unit>
-    val onCollectionChange: MutableCollection<(old: V, new: V) -> Unit>
-    val onCollectionRemove: MutableCollection<(value: V) -> Unit>
-    val onCollectionReplace: MutableCollection<(ObservableCollection<V>) -> Unit>
-
-    val onCollectionUpdate: ObservableProperty<ObservableCollection<V>>
-
+interface ObservableCollection<V> : Collection<V>, ObservableProperty<ObservableCollection<V>> {
+    override val value: ObservableCollection<V> get() = this
+    val onCollectionAdd: Event<V>
+    val onCollectionChange: Event<Pair<V, V>>
+    val onCollectionRemove: Event<V>
+    val onCollectionReplace: Event<ObservableCollection<V>>
 }
 

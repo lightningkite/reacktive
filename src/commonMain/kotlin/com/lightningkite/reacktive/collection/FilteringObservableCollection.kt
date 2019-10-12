@@ -1,12 +1,31 @@
 package com.lightningkite.reacktive.collection
 
+import com.lightningkite.reacktive.event.*
 import com.lightningkite.reacktive.invokeAll
+import com.lightningkite.reacktive.property.combine
 
 class FilteringObservableCollection<V>(
         val source: MutableObservableCollection<V>,
         filter: (V)->Boolean
-) : EnablingObservableCollection<V>(), MutableObservableCollection<V> {
+) : MutableObservableCollection<V> {
     override var size: Int = 0
+
+    private val manualOnAdd = StandardEvent<V>()
+    override val onCollectionAdd: Event<V> = combine(
+            source.onCollectionAdd.filter(filter),
+            source.onCollectionChange.filter { !filter(it.first) && filter(it.second) }.map { it.second },
+            manualOnAdd
+    )
+    override val onCollectionChange: Event<Pair<V, V>> = source.onCollectionChange.filter { filter(it.first) && filter(it.second) }
+    private val manualOnRemove = StandardEvent<V>()
+    override val onCollectionRemove: Event<V> = combine(
+            source.onCollectionRemove.filter(filter),
+            source.onCollectionChange.filter { filter(it.first) && !filter(it.second) }.map { it.first },
+            manualOnRemove
+    )
+    override val onCollectionReplace: Event<ObservableCollection<V>> = source.onCollectionReplace.map { this }
+    private val manualOnChange = StandardEvent<ObservableCollection<V>>()
+    override val onChange: Event<ObservableCollection<V>> = combine<ObservableCollection<V>>(manualOnChange, source.onChange.map { this })
 
     override fun change(old: V, new: V) = source.change(old, new)
     override fun contains(element: V): Boolean = filter(element) && source.contains(element)
@@ -60,57 +79,15 @@ class FilteringObservableCollection<V>(
 
     var filter: (V)->Boolean = filter
         set(value){
+            val old = field
             field = value
-            refresh()
+            for(item in source){
+                val oldPasses = old(item)
+                val newPasses = value(item)
+                if(oldPasses && !newPasses) manualOnRemove.invokeAll(item)
+                if(!oldPasses && newPasses) manualOnAdd.invokeAll(item)
+            }
+            manualOnChange.invokeAll(this)
         }
-
-    val onCollectionAddListener: (value: V) -> Unit = { value: V ->
-        if(filter(value)){
-            size++
-            onCollectionAdd.invokeAll(value)
-        }
-    }
-    val onCollectionChangeListener: (old: V, new: V) -> Unit = { old: V, new: V ->
-        val prev = filter(old)
-        val now = filter(new)
-        if(!prev && now){
-            size++
-            onCollectionAdd.invokeAll(new)
-        } else if(prev && !now){
-            size--
-            onCollectionRemove.invokeAll(old)
-        } else  if(now) {
-            onCollectionChange.invokeAll(old, new)
-        }
-    }
-    val onCollectionRemoveListener: (value: V) -> Unit = { value: V ->
-        if(filter(value)){
-            size--
-            onCollectionRemove.invokeAll(value)
-        }
-    }
-    val onCollectionReplaceListener: (ObservableCollection<V>) -> Unit = { collection: ObservableCollection<V> ->
-        refresh()
-    }
-
-    override fun refresh() {
-        size = source.count(filter)
-        onCollectionReplace.invokeAll(this)
-        onCollectionUpdate.update()
-    }
-
-    override fun enable() {
-        source.onCollectionAdd.add(onCollectionAddListener)
-        source.onCollectionChange.add(onCollectionChangeListener)
-        source.onCollectionRemove.add(onCollectionRemoveListener)
-        source.onCollectionReplace.add(onCollectionReplaceListener)
-    }
-
-    override fun disable() {
-        source.onCollectionAdd.remove(onCollectionAddListener)
-        source.onCollectionChange.remove(onCollectionChangeListener)
-        source.onCollectionRemove.remove(onCollectionRemoveListener)
-        source.onCollectionReplace.remove(onCollectionReplaceListener)
-    }
 
 }
